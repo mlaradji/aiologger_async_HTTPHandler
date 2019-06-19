@@ -1,7 +1,7 @@
 import re
 import aiohttp
 from yarl import URL
-from typing import Union, Optional
+from typing import Union, Optional, Dict
 from asyncio import AbstractEventLoop
 from aiologger.levels import LogLevel
 from aiologger.formatters.base import Formatter
@@ -9,12 +9,15 @@ from aiologger.filters import Filter
 from aiologger.handlers.base import Handler
 from aiologger.records import LogRecord
 
-
 StrOrURL = Union[str, URL]
 
 
-def _get_msg_dict(self, record):
-    # self.format(record)
+def _get_msg_dict(self, record: LogRecord) -> Dict[str, str]:
+    """
+    :param self:
+    :param record:
+    :return:
+    """
     record.message = record.get_message()
     record.asctime = self.format_time(record, self.datefmt)
     params = re.findall("%\((.*?)\)", self._fmt)
@@ -46,7 +49,7 @@ class AsyncHTTPHandler(Handler):
         self.formatter.__class__.get_msg_dict = _get_msg_dict
         # self.formatter.get_msg_dict = _get_msg_dict  # add get_msg_dict for formatter
 
-        self.sesison = aiohttp.ClientSession()
+        self.session = aiohttp.ClientSession()
         if filter:
             self.add_filter(filter)
 
@@ -66,7 +69,7 @@ class AsyncHTTPHandler(Handler):
         else:
             kwargs["params"] = data
 
-        await self.sesison.request(**kwargs)
+        await self.session.request(**kwargs)
 
     async def close(self):
-        await self.sesison.close()
+        await self.session.close()

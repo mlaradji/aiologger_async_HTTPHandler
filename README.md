@@ -8,8 +8,6 @@
 
 **Example**
 
-    import time
-    import aiohttp
     import asyncio
     from aiologger import Logger
     from aiologger.formatters.base import Formatter
