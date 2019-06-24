@@ -48,8 +48,6 @@ class AsyncHTTPHandler(Handler):
         self.formatter: Formatter = formatter if formatter else Formatter()
         self.formatter.__class__.get_msg_dict = _get_msg_dict
         # self.formatter.get_msg_dict = _get_msg_dict  # add get_msg_dict for formatter
-
-        self.session = aiohttp.ClientSession()
         if filter:
             self.add_filter(filter)
 
@@ -69,7 +67,8 @@ class AsyncHTTPHandler(Handler):
         else:
             kwargs["params"] = data
 
-        await self.session.request(**kwargs)
+        async with aiohttp.request(**kwargs):
+            pass
 
     async def close(self):
-        await self.session.close()
+        pass
