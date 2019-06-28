@@ -1,7 +1,7 @@
 import re
 import aiohttp
 from yarl import URL
-from typing import Union, Optional, Dict
+from typing import Union, Optional, Dict, Callable
 from asyncio import AbstractEventLoop
 from aiologger.levels import LogLevel
 from aiologger.formatters.base import Formatter
@@ -38,6 +38,7 @@ class AsyncHTTPHandler(Handler):
                  level: Union[str, int, LogLevel] = LogLevel.NOTSET,
                  formatter: Formatter = None,
                  filter: Filter = None,
+                 get_msg_dict: Callable[[],dict] = _get_msg_dict,
                  *,
                  loop: Optional[AbstractEventLoop] = None,
                  ):
@@ -46,7 +47,7 @@ class AsyncHTTPHandler(Handler):
         self._method = method.upper()
         self.level = level
         self.formatter: Formatter = formatter if formatter else Formatter()
-        self.formatter.__class__.get_msg_dict = _get_msg_dict
+        self.formatter.__class__.get_msg_dict = get_msg_dict
         # self.formatter.get_msg_dict = _get_msg_dict  # add get_msg_dict for formatter
         if filter:
             self.add_filter(filter)
